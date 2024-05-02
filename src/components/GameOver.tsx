@@ -1,7 +1,6 @@
-import './GameOver.css';
-
 import { startNewGame } from '../store/actions';
 import { useAppDispatch } from '../store/store';
+import './GameOver.css';
 
 export const GameOver = () => {
     const dispatch = useAppDispatch();

@@ -1,7 +1,5 @@
-import { SwipeDirections } from 'react-swipeable';
-
 import { createAsyncThunk, nanoid } from '@reduxjs/toolkit';
-
+import { SwipeDirections } from 'react-swipeable';
 import { gameSlice } from './gameSlice';
 import { GameState } from './models/gameState.interface';
 import { selectIsGameStarted, selectIsStable, selectSize, selectTiles } from './selectors';
@@ -24,7 +22,7 @@ export const generateNewTile = createAsyncThunk<void, void, { state: GameState }
     'game/generateNewTile',
     (_, { getState, dispatch }) => {
         const { tiles, size } = getState();
-        let coord = getRandomCoordinate(size, Object.values(tiles));
+        const coord = getRandomCoordinate(size, Object.values(tiles));
 
         if (coord) {
             dispatch(
@@ -50,10 +48,10 @@ export const startNewGame = createAsyncThunk<void, void, { state: GameState }>(
 export const setGameOver = createAsyncThunk<void, void, { state: GameState }>(
     'game/setGameOver',
     (_, { dispatch, getState }) => {
-        let { score, bestScore } = getState();
-        bestScore = Math.max(bestScore, score);
-        localStorage.setItem('bestScore', bestScore.toString());
-        dispatch(updateBestScore(bestScore));
+        const { score, bestScore } = getState();
+        const updatedBestScore = Math.max(bestScore, score);
+        localStorage.setItem('bestScore', updatedBestScore.toString());
+        dispatch(updateBestScore(updatedBestScore));
         dispatch(endGame());
     }
 );
@@ -74,10 +72,8 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
         }
 
         const [size, tiles] = [selectSize(state), selectTiles(state)];
-
-        const tileGrid = mapTilesToGrid(size, Object.values(tiles));
-
-        let dirOffset = DirectionOffsets[dir];
+        const tileGrid = mapTilesToGrid(size, Object.values(tiles), (tile) => (tile ? [tile] : []));
+        const dirOffset = DirectionOffsets[dir];
         let hasMovement = false;
 
         for (let i = 0; i < size; i++) {
@@ -95,7 +91,7 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
 
                 // map <i, j> to <row, col> according direction `dir`
                 // every iteration, we have to get new state case
-                let cell = tileGrid[row][col];
+                const cell = tileGrid[row][col];
                 if (cell.length !== 1) continue; // current tile is empty or is a tile to merge
 
                 // detect next tile in the direction of `dir`
@@ -118,7 +114,7 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
 
                 if (nextCell && nextCell.length === 1 && nextCell[0].number === cell[0].number) {
                     // if nextTile has same number and is now a newly merged tile
-                    let payload = {
+                    const payload = {
                         id: cell[0].id,
                         destCol: nextCol,
                         destRow: nextRow,

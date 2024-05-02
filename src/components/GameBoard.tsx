@@ -1,19 +1,17 @@
 import './GameBoard.css';
-
 import { selectIsGameStarted, selectSize } from '../store/selectors';
 import { useAppSelector } from '../store/store';
+import { createArray2D } from '../store/utils';
 import { GameOver } from './GameOver';
 import { HeaderBox } from './HeaderBox';
 import { Tiles } from './Tiles';
 
 const BackgroundGrids = () => {
     const size = useAppSelector(selectSize);
-    let row = (i: number) => {
-        return new Array(size)
-            .fill(null)
-            .map((_, j) => <div className="grid-cell" key={`grid-cell-${i * size + j}`}></div>);
-    };
-    let grids = new Array(size).fill(null).map((_, i) => row(i));
+
+    const grids = createArray2D(size, (i, j) => (
+        <div className="grid-cell" key={`grid-cell-${i * size + j}`}></div>
+    ));
 
     return <div className="grid-container">{grids}</div>;
 };

@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { SwipeDirections, useSwipeable } from 'react-swipeable';
-
 import { moveTiles, setGameOver, startNewGame } from '../store/actions';
 import { selectIsMovable } from '../store/selectors';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { GameBoard } from './GameBoard';
 
-const useArrowKeyPress = (callback: (dir: SwipeDirections) => any) => {
+const useArrowKeyPress = (callback: (dir: SwipeDirections) => void) => {
     const callbackRef = useRef(callback);
     callbackRef.current = callback;
 
     useEffect(() => {
         const handleKeyPress = (ev: KeyboardEvent) => {
-            let match = ev.key.toLowerCase().match(/arrow(up|right|down|left)/);
+            const match = ev.key.toLowerCase().match(/arrow(up|right|down|left)/);
             if (match) {
                 const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
                 callbackRef.current(capitalize(match[1]) as SwipeDirections);
@@ -39,7 +38,7 @@ export const Game = () => {
 
     useEffect(() => {
         dispatch(startNewGame());
-    }, []);
+    }, [dispatch]);
 
     const handlers = useSwipeable({ onSwiped: ({ dir }) => move(dir), preventScrollOnSwipe: true });
     return (

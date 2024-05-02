@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import { GameState } from './models/gameState.interface';
 import { GameStatus } from './models/gameStatus.enum';
 import {
-    NewTilePayload, TileMergePayload, TileMovementPayload, TilePayload
+    NewTilePayload,
+    TileMergePayload,
+    TileMovementPayload,
+    TilePayload,
 } from './models/payload.interface';
 
 const initialState: GameState = {
@@ -36,7 +38,9 @@ export const gameSlice = createSlice({
             state.bestScore = action.payload;
         },
         cleanRecentlyAddedScore(state, action: PayloadAction<string>) {
-            state.recentlyAddedScores = state.recentlyAddedScores.filter((score) => score.id !== action.payload);
+            state.recentlyAddedScores = state.recentlyAddedScores.filter(
+                (score) => score.id !== action.payload
+            );
         },
         moveTile(state, { payload }: PayloadAction<TileMovementPayload>) {
             const tileToMove = state.tiles[payload.id];

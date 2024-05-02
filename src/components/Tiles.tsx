@@ -1,29 +1,27 @@
-import './Tiles.css';
-
 import { memo } from 'react';
-
 import { afterMergeTile, afterNewTitle } from '../store/actions';
 import { Tile } from '../store/models/tile.model';
 import { selectTiles } from '../store/selectors';
 import { useAppDispatch, useAppSelector } from '../store/store';
+import './Tiles.css';
 
 const TILE_WIDTH = 100;
 const TILE_GAP = 10;
 
 const TileComponent = memo(({ tile }: { tile: Tile }) => {
-    let { col, row } = tile;
-    let classMap = {
+    const { col, row } = tile;
+    const classMap = {
         tile: true,
         [`tile-${tile.number}`]: true,
         'tile-new': tile.isNewlyGenerated,
         'tile-merged': !!tile.isNewlyMerged,
     };
-    let classNames = Object.keys(classMap)
+    const classNames = Object.keys(classMap)
         .filter((cls) => !!classMap[cls])
         .join(' ');
-    let x = col * (TILE_WIDTH + TILE_GAP) + 'px';
-    let y = row * (TILE_WIDTH + TILE_GAP) + 'px';
-    let style = { transform: `translate3d(${x}, ${y}, 0)` };
+    const x = col * (TILE_WIDTH + TILE_GAP) + 'px';
+    const y = row * (TILE_WIDTH + TILE_GAP) + 'px';
+    const style = { transform: `translate3d(${x}, ${y}, 0)` };
 
     const dispatch = useAppDispatch();
 
@@ -37,7 +35,10 @@ const TileComponent = memo(({ tile }: { tile: Tile }) => {
 
     return (
         <div className={classNames} style={style}>
-            <div className="tile-inner" onAnimationEnd={({ animationName }) => onAnimationEnd(animationName)}>
+            <div
+                className="tile-inner"
+                onAnimationEnd={({ animationName }) => onAnimationEnd(animationName)}
+            >
                 {tile.number}
             </div>
         </div>

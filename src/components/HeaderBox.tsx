@@ -1,10 +1,8 @@
-import './HeaderBox.css';
-
 import { PropsWithChildren } from 'react';
-
 import { cleanRecentlyAddedScore, startNewGame } from '../store/actions';
 import { selectBestScore, selectRecentlyAddedScores, selectScore } from '../store/selectors';
 import { useAppDispatch, useAppSelector } from '../store/store';
+import './HeaderBox.css';
 
 type ScoreBoxProps = PropsWithChildren<{ label: 'SCORE' | 'BEST' }>;
 
