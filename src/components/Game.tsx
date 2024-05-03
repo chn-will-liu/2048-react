@@ -25,6 +25,16 @@ const useArrowKeyPress = (callback: (dir: SwipeDirections) => void) => {
     }, [callbackRef]);
 };
 
+const useBeforeUnloadWarning = () => {
+    useEffect(() => {
+        const beforeUnload = (ev: BeforeUnloadEvent) => {
+            ev.preventDefault();
+        };
+        window.addEventListener('beforeunload', beforeUnload);
+        return () => window.removeEventListener('beforeunload', beforeUnload);
+    }, []);
+};
+
 export const Game = () => {
     const dispatch = useAppDispatch();
     const isMovable = useAppSelector(selectIsMovable);
@@ -35,6 +45,7 @@ export const Game = () => {
 
     const move = useCallback((dir: SwipeDirections) => dispatch(moveTiles(dir)), [dispatch]);
     useArrowKeyPress(move);
+    useBeforeUnloadWarning();
 
     useEffect(() => {
         dispatch(startNewGame());

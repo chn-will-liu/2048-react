@@ -63,6 +63,9 @@ const DirectionOffsets: Record<SwipeDirections, [number, number]> = {
     Right: [1, 0],
 };
 
+/**
+ * Move tiles in the direction of `dir` and merge any applicable tiles and generate new tile if possible
+ */
 export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameState }>(
     'game/moveTiles',
     async (dir, { getState, dispatch }) => {
@@ -72,6 +75,7 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
         }
 
         const [size, tiles] = [selectSize(state), selectTiles(state)];
+        // We need a 2D array to represent the game board and each cell may contain up to 2 tiles after moving and before merging
         const tileGrid = mapTilesToGrid(size, Object.values(tiles), (tile) => (tile ? [tile] : []));
         const dirOffset = DirectionOffsets[dir];
         let hasMovement = false;
@@ -85,17 +89,14 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
                     col = size - j - 1;
                 }
                 if (dir === 'Down') {
-                    // reverse row to iteratefrom bottom t -top
+                    // reverse row to iterate from bottom to top
                     row = size - i - 1;
                 }
 
-                // map <i, j> to <row, col> according direction `dir`
-                // every iteration, we have to get new state case
                 const cell = tileGrid[row][col];
-                if (cell.length !== 1) continue; // current tile is empty or is a tile to merge
+                if (cell.length !== 1) continue; // current cell is empty or has more than one tile(i.e. pending merge)
 
-                // detect next tile in the direction of `dir`
-                // firstly, get the next coordinate
+                // check next tile in the direction of `dir`
                 let nextCol = col + dirOffset[0];
                 let nextRow = row + dirOffset[1];
                 let nextCell: typeof cell | null = null;
@@ -154,6 +155,7 @@ export const moveTiles = createAsyncThunk<void, SwipeDirections, { state: GameSt
 
         let score = 0;
         deepForEach(tileGrid, (cell) => {
+            // now we deal with merging tiles
             if (cell.length === 2) {
                 score += cell[0].number + cell[1].number;
                 dispatch(mergeTile({ id: cell[0].id, tileToMerge: cell[1].id }));
